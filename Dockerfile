@@ -81,7 +81,10 @@ RUN \
         clang \
     && echo 'Installing x86 bare metal emulation' >&2 && \
     apt-get -y install \
-        qemu-system-x86
+        qemu-system-x86 \
+    && echo 'Installing dwq dependencies' >&2 && \
+    apt-get -y install \
+        python3-pip autossh
 
 # cleanup apt leftovers
 RUN echo 'Cleaning up installation files' >&2 && \
@@ -94,6 +97,14 @@ RUN mkdir -p /opt && \
 
 ENV PATH $PATH:/opt/mips-mti-elf/2016.05-03/bin
 ENV MIPS_ELF_ROOT /opt/mips-mti-elf/2016.05-03
+
+# install dwq (disque work queue)
+RUN pip3 install dwq
+
+# get git-cache directly from github
+RUN wget https://github.com/kaspar030/git-cache/raw/master/git-cache \
+        -O /usr/bin/git-cache \
+        && chmod a+x /usr/bin/git-cache
 
 # compile suid create_user binary
 COPY create_user.c /tmp/create_user.c
@@ -108,6 +119,9 @@ RUN mkdir -p /data/riotbuild && chmod a+rwx /data/riotbuild
 # Set a global system-wide git user and email address
 RUN git config --system user.name "riot" && \
     git config --system user.email "riot@example.com"
+
+# install murdock slave startup script
+COPY murdock_slave.sh /usr/bin/murdock_slave
 
 # Copy our entry point script (signal wrapper)
 COPY run.sh /run.sh
