@@ -83,8 +83,11 @@ RUN \
     apt-get -y install \
         libsocketcan-dev:i386 \
         libsocketcan2:i386 \
+    && echo 'Installing dwq dependencies' >&2 && \
+    apt-get -y install \
+        python3-pip autossh \
     && echo 'Cleaning up installation files' >&2 && \
-    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+        apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Install ARM GNU embedded toolchain
 # For updates, see https://developer.arm.com/open-source/gnu-toolchain/gnu-rm/downloads
@@ -135,6 +138,17 @@ RUN ldconfig
 
 ENV PATH $PATH:/opt/gnu-mcu-eclipse/riscv-none-gcc/7.2.0-2-20180111-2230/bin
 
+# install dwq (disque work queue)
+RUN pip3 install dwq
+
+# install testrunner dependencies
+RUN pip3 install click
+
+# get git-cache directly from github
+RUN wget https://github.com/kaspar030/git-cache/raw/master/git-cache \
+        -O /usr/bin/git-cache \
+        && chmod a+x /usr/bin/git-cache
+
 # compile suid create_user binary
 COPY create_user.c /tmp/create_user.c
 RUN gcc -DHOMEDIR=\"/data/riotbuild\" -DUSERNAME=\"riotbuild\" /tmp/create_user.c -o /usr/local/bin/create_user \
@@ -153,11 +167,14 @@ RUN echo 'Adding esp8266 toolchain' >&2 && \
 ENV PATH $PATH:/opt/esp/esp-open-sdk/xtensa-lx106-elf/bin
 
 # Create working directory for mounting the RIOT sources
-RUN mkdir -m 777 -p /data/riotbuild
+RUN mkdir -p /data/riotbuild && chmod a+rwx /data/riotbuild
 
 # Set a global system-wide git user and email address
 RUN git config --system user.name "riot" && \
     git config --system user.email "riot@example.com"
+
+# install murdock slave startup script
+COPY murdock_slave.sh /usr/bin/murdock_slave
 
 # Copy our entry point script (signal wrapper)
 COPY run.sh /run.sh
