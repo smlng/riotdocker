@@ -81,8 +81,10 @@ RUN \
         clang \
     && echo 'Installing x86 bare metal emulation' >&2 && \
     apt-get -y install \
-        qemu-system-x86 \
-    && echo 'Cleaning up installation files' >&2 && \
+        qemu-system-x86
+
+# cleanup apt leftovers
+RUN echo 'Cleaning up installation files' >&2 && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Install MIPS binary toolchain
