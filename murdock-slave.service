@@ -1,0 +1,17 @@
+[Unit]
+Description=Murdock Slave Container
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=0
+Restart=always
+Environment=MURDOCK_USER=murdock
+Environment=MURDOCK_INSTANCE=%n
+ExecStartPre=-/usr/bin/docker stop %n
+ExecStartPre=-/usr/bin/docker rm %n
+#ExecStartPre=/usr/bin/docker pull redis
+ExecStart=/usr/local/bin/start_murdock_slave.sh
+
+[Install]
+WantedBy=multi-user.target
