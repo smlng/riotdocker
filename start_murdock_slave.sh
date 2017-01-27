@@ -1,11 +1,15 @@
 #!/bin/sh
 
-exec docker run --rm -t -i -u $(id -u) \
-    --tmpfs /tmp:rw,exec,size=8g \
-    -v ${HOME}/.ssh:/data/riotbuild/.ssh \
-    -v ${HOME}/.gitcache:/data/riotbuild/.gitcache \
-    -v ${HOME}/.ccache:/data/riotbuild/.ccache \
+MURDOCK_HOSTNAME=${MURDOCK_HOSTNAME:-${HOSTNAME}}
+MURDOCK_USER=${MURDOCK_USER:-${USER}}
+MURDOCK_HOME=$(eval echo ~${MURDOCK_USER})
+MURDOCK_QUEUES=${MURDOCK_QUEUES:-${MURDOCK_HOSTNAME} default}
+#MURDOCK_EXTRA_ARGS="--tmpfs /tmp:size=4g,exec,nosuid"
+
+exec docker run --rm -t -i -u $(id -u ${MURDOCK_USER}) \
+    -v ${MURDOCK_HOME}:/data/riotbuild \
+    ${MURDOCK_EXTRA_ARGS} \
     -e CCACHE="ccache" \
-    -e "DWQ_SSH=${DWQ_SSH}" \
-    --security-opt seccomp=unconfined \ # needed for 32bit getcontext() in native to work properly
-    riotdocker-dwq $*
+    -e DWQ_SSH \
+    --security-opt seccomp=unconfined \
+    riotdocker-dwq murdock_slave --name $MURDOCK_HOSTNAME --queues ${MURDOCK_QUEUES}
