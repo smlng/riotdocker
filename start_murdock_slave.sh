@@ -1,10 +1,10 @@
 #!/bin/sh
 
 MURDOCK_HOSTNAME=${MURDOCK_HOSTNAME:-$(hostname)}
-MURDOCK_USER=${MURDOCK_USER:-${USER}}
+MURDOCK_USER=${MURDOCK_USER:-murdock}
 MURDOCK_HOME=$(eval echo ~${MURDOCK_USER})
 MURDOCK_QUEUES=${MURDOCK_QUEUES:-${MURDOCK_HOSTNAME} default}
-#MURDOCK_DOCKER_ARGS="--tmpfs /tmp:size=4g,exec,nosuid"
+MURDOCK_DOCKER_ARGS=${MURDOCK_DOCKER_ARGS:-"--tmpfs /tmp:size=1g,exec,nosuid"}
 
 exec docker run --rm -u $(id -u ${MURDOCK_USER}) \
     -v ${MURDOCK_HOME}:/data/riotbuild \
