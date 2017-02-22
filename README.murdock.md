@@ -24,7 +24,7 @@ ccache.  By default, the slave will use up to 50g for the cache.
 
 3. make sure murdock user can ssh "murdock" without password
 
-    # sudo su - murdock
+    # sudo su -s /bin/sh - murdock
     # ssh murdock && echo OK!
 
 4. create container
