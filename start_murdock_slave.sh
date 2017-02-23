@@ -12,4 +12,4 @@ exec docker run --rm -u $(id -u ${MURDOCK_USER}) \
     -e CCACHE="ccache" \
     -e DWQ_SSH \
     --security-opt seccomp=unconfined \
-    riotdocker-dwq murdock_slave --name $MURDOCK_HOSTNAME --queues ${MURDOCK_QUEUES} "$@"
+    kaspar030/riotdocker-dwq:latest murdock_slave --name $MURDOCK_HOSTNAME --queues ${MURDOCK_QUEUES} "$@"
