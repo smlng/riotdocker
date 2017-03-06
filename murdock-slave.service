@@ -10,7 +10,7 @@ Environment=MURDOCK_USER=murdock
 Environment=MURDOCK_INSTANCE=%n
 ExecStartPre=-/usr/bin/docker stop %n
 ExecStartPre=-/usr/bin/docker rm %n
-ExecStartPre=/usr/bin/docker pull kaspar030/riotdocker-dwq:latest
+ExecStartPre=/usr/bin/docker pull kaspar030/riotdocker:latest
 ExecStart=/usr/local/bin/start_murdock_slave.sh
 
 [Install]
