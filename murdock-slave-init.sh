@@ -1,15 +1,18 @@
 #!/bin/sh
 
+NAME=murdock_slave
+
 case $1 in
     test)
-        docker ps | grep -s -q murdock_slave
+        docker ps | grep -s -q "\\s${NAME}\$"
         ;;
     start)
-        echo docker rm murdock_slave
-        echo docker pull kaspar030/riotdocker:latest
-        echo start_murdock_slave.sh
+        docker rm ${NAME} >/dev/null 2>&1
+        docker pull kaspar030/riotdocker:latest
+        start_murdock_slave.sh
         ;;
     stop)
-        echo docker kill murdock_slave
+        docker kill ${NAME}
+        docker rm ${NAME}
         ;;
 esac
