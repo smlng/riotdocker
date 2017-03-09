@@ -1,0 +1,4 @@
+check program murdock-slave with path "/usr/local/bin/murdock-slave-init.sh test"
+	if status != 0 then restart
+	start program = "/usr/local/bin/murdock-slave-init.sh start"
+	stop program = "/usr/local/bin/murdock-slave-init.sh stop"
