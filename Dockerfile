@@ -166,21 +166,22 @@ RUN echo 'Adding esp8266 toolchain' >&2 && \
 
 ENV PATH $PATH:/opt/esp/esp-open-sdk/xtensa-lx106-elf/bin
 
+# create and configure ssh tunnel to master
+RUN mkdir -p /data/riotbuild/.ssh && chmod 755 /data/riotbuild/.ssh
+COPY ssh-config /data/riotbuild/.ssh/config
+RUN chmod 644 /data/riotbuild/.ssh/config
+RUN chown -R riot:riot /data/riotbuild/.ssh
+
 # Create working directory for mounting the RIOT sources
 RUN mkdir -p /data/riotbuild && chmod a+rwx /data/riotbuild
 
 # Set a global system-wide git user and email address
 RUN git config --system user.name "riot" && \
-    git config --system user.email "riot@example.com"
+    git config --system user.email "riot@riot-os.org"
 
 # install murdock slave startup script
 COPY murdock_slave.sh /usr/bin/murdock_slave
 
-# Copy our entry point script (signal wrapper)
-COPY run.sh /run.sh
-ENTRYPOINT ["/bin/bash", "/run.sh"]
-
-# By default, run a shell when no command is specified on the docker command line
-CMD ["/bin/bash"]
+ENTRYPOINT ["/bin/bash", "/usr/bin/murdock_slave", "--name ${MURDOCK_HOSTNAME}", "--queues ${MURDOCK_QUEUES}", "--jobs ${MURDOCK_WORKERS}"]
 
 WORKDIR /data/riotbuild
