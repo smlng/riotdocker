@@ -13,7 +13,7 @@
 # 3. cd to riot root
 # 4. # docker run -i -t -u $UID -v $(pwd):/data/riotbuild riotbuild ./dist/tools/compile_test/compile_test.py
 
-FROM ubuntu:xenial
+FROM ubuntu:bionic
 
 MAINTAINER Joakim Nohlgård <joakim.nohlgard@eistec.se>
 
@@ -41,6 +41,7 @@ RUN \
         bsdmainutils \
         build-essential \
         ccache \
+        cmake \
         coccinelle \
         curl \
         cppcheck \
@@ -70,6 +71,7 @@ RUN \
     && echo 'Installing MSP430 toolchain' >&2 && \
     apt-get -y install \
         gcc-msp430 \
+        msp430-libc \
     && echo 'Installing AVR toolchain' >&2 && \
     apt-get -y install \
         gcc-avr \
@@ -121,7 +123,6 @@ RUN mkdir -p /opt && \
 ENV MIPS_ELF_ROOT /opt/mips-mti-elf/2016.05-03
 ENV PATH ${PATH}:${MIPS_ELF_ROOT}/bin
 
-# Install RISC-V binary toolchain
 RUN mkdir -p /opt && \
         wget -q https://github.com/gnu-mcu-eclipse/riscv-none-gcc/releases/download/v7.2.0-2-20180110/gnu-mcu-eclipse-riscv-none-gcc-7.2.0-2-20180111-2230-centos64.tgz -O- \
         | tar -C /opt -xz && \
@@ -182,6 +183,6 @@ RUN git config --system user.name "riot" && \
 # install murdock slave startup script
 COPY murdock_slave.sh /usr/bin/murdock_slave
 
-ENTRYPOINT ["/bin/bash", "/usr/bin/murdock_slave", "--name ${MURDOCK_HOSTNAME}", "--queues ${MURDOCK_QUEUES}", "--jobs ${MURDOCK_WORKERS}"]
+ENTRYPOINT ["/bin/bash"]
 
 WORKDIR /data/riotbuild
