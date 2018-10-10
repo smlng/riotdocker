@@ -46,6 +46,7 @@ RUN \
         curl \
         cppcheck \
         doxygen \
+        flake8 \
         gcc-multilib \
         gdb \
         g++-multilib \
